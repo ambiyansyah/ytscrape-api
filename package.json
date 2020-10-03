@@ -5,8 +5,8 @@
     "main": "server.js",
     "author": "Herman Fassett",
     "dependencies": {
-        "express": "latest",
-        "request": "latest",
-        "cheerio": "latest"
+        "cheerio": "^1.0.0-rc.3",
+        "express": "^4.17.1",
+        "request": "^2.88.2"
     }
 }
