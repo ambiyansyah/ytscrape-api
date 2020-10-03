@@ -4,7 +4,7 @@ const request = require('request');
 async function youtube(query, page) {
     return new Promise((resolve, reject) => {
         // Specify YouTube search url
-        let url = `https://www.youtube.com/results?q=${encodeURIComponent(query)}${page ? `&page=${page}` : ''}`;
+        let url = `https://www.youtube.com/results?q=${encodeURIComponent(query)}&sp=EgIoAQ==${page ? `&page=${page}` : ''}`;
 
         // Access YouTube search
         request(url, (error, response, html) => {
@@ -31,7 +31,7 @@ async function youtube(query, page) {
                         json["estimatedResults"] = data.estimatedResults || "0";
                         sectionLists = data.contents.twoColumnSearchResultsRenderer.primaryContents.sectionListRenderer.contents;
                     }
-                    catch(ex) {
+                    catch (ex) {
                         console.error("Failed to parse data:", ex);
                         console.log(data);
                     }
@@ -54,7 +54,7 @@ async function youtube(query, page) {
                                         json.results.push(parsePlaylistRenderer(content.playlistRenderer));
                                     }
                                 }
-                                catch(ex) {
+                                catch (ex) {
                                     console.error("Failed to parse renderer:", ex);
                                     console.log(content);
                                 }
@@ -66,7 +66,7 @@ async function youtube(query, page) {
                         }
                     });
                 }
-    
+
                 return resolve(json);
             }
             resolve({ error: error });
@@ -122,8 +122,8 @@ function parseChannelRenderer(renderer) {
         "video_count": renderer.videoCountText ? renderer.videoCountText.runs.reduce(comb, "") : "",
         "subscriber_count": renderer.subscriberCountText ? renderer.subscriberCountText.simpleText : "0 subscribers",
         "verified": renderer.ownerBadges &&
-                    renderer.ownerBadges.some(badge => badge.metadataBadgeRenderer.style.indexOf("VERIFIED") > -1) || 
-                    false
+            renderer.ownerBadges.some(badge => badge.metadataBadgeRenderer.style.indexOf("VERIFIED") > -1) ||
+            false
     };
 
     return { channel };
@@ -185,8 +185,8 @@ function parseVideoRenderer(renderer) {
         "url": `https://www.youtube.com${renderer.navigationEndpoint.commandMetadata.webCommandMetadata.url}`,
         "duration": renderer.lengthText ? renderer.lengthText.simpleText : "Live",
         "snippet": renderer.descriptionSnippet ?
-                   renderer.descriptionSnippet.runs.reduce((a, b) => a + (b.bold ? `<b>${b.text}</b>` : b.text), ""):
-                   "",
+            renderer.descriptionSnippet.runs.reduce((a, b) => a + (b.bold ? `<b>${b.text}</b>` : b.text), "") :
+            "",
         "upload_date": renderer.publishedTimeText ? renderer.publishedTimeText.simpleText : "Live",
         "thumbnail_src": renderer.thumbnail.thumbnails[renderer.thumbnail.thumbnails.length - 1].url,
         "views": renderer.viewCountText ?
@@ -199,7 +199,7 @@ function parseVideoRenderer(renderer) {
         "url": `https://www.youtube.com${renderer.ownerText.runs[0].navigationEndpoint.commandMetadata.webCommandMetadata.url}`
     };
     uploader.verified = renderer.ownerBadges &&
-        renderer.ownerBadges.some(badge => badge.metadataBadgeRenderer.style.indexOf("VERIFIED") > -1) || 
+        renderer.ownerBadges.some(badge => badge.metadataBadgeRenderer.style.indexOf("VERIFIED") > -1) ||
         false;
 
     return { video: video, uploader: uploader };
